@@ -1,0 +1,33 @@
+{
+  "name": "TP1",
+  "version": "1.0.0",
+  "description": "sorting",
+  "main": "index.js",
+  "author": "lop",
+  "license": "MIT",
+  "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/material": "^5.11.12",
+    "cross-env": "^7.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "^5.0.1"
+  },
+  "scripts": {
+    "build": "react-scripts build",
+    "start": "cross-env PORT=10888 react-scripts start"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
