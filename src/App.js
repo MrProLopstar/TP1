@@ -21,9 +21,10 @@ export default class App extends React.Component {
     this.setState({[t]:  value});
   };
   handleClose = () => { this.setState({open: false}); }
-  itemPush = (many,n1,n2) => {
+  itemPush = (many,n1,n2,el) => {
     return (
       <>
+        {el} 
         {many.map((x,index) => {
           return <b style={{color: index==n1 ? "#F0E68C" : (index==n2 ? "#DDA0DD" : "#9ACD32")}}>{Number(x)}{index<many.length-1 && ", "}</b>;
         })}
@@ -31,8 +32,8 @@ export default class App extends React.Component {
       </>
     );
   };
-  ifPush = (str) => { return <><b className="num" style={{color: "red"}}>{str}</b><Divider/></>; };
-
+  ifPush = (str,col) => { return <><b className="num" style={{color: col ? col : "red"}}>{str}</b><Divider/></>; };
+  //
   bubbleSort = async () => {
     await this.setState({items:[],text:null});
     let {many,items} = this.state;
@@ -48,21 +49,32 @@ export default class App extends React.Component {
     if(items.length>0) this.setState({items,text:"Cортировка пузырьком:",open:true,alert:"success"});
     else this.setState({open:true,alert:"error"});
   }
-
+  //
   insertSort = async () => {
     await this.setState({items:[],text:null});
     let {many,items} = this.state;
     try{ many=JSON.parse(many) } catch(e){ return this.setState({open:true,alert:"error"}); };
     for(let i=0; i<many.length; i++){
       let a = many[i], j;
-      for(j=i;j>0 && many[j-1]>a; j--){ many[j] = many[j-1]; };
+      for(j=i;j>0; j--){
+        console.log(j)
+        if(many[j-1]>a){
+          many[j] = many[j-1];
+          items.push(this.ifPush(many[j-1]+">"+a,"green"));
+        } else { 
+          many[j] = a;
+          items.push(this.itemPush(many,j,i,this.ifPush(many[j-1]+"≤"+a)));
+          break;
+        }
+      };
       many[j] = a;
-      items.push(this.itemPush(many,j,i));
+      //items.push(this.itemPush(many,j,i));
     }
     if(items.length>0) this.setState({items,text:"Cортировка вставками:",open:true,alert:"success"});
     else this.setState({open:true,alert:"error"});
   }
-  partition = (arr,start,end,items) => {
+  //
+  /*partition = (arr,start,end,items) => {
     const swap = (a,b) => { [arr[a], arr[b]] = [arr[b], arr[a]]; };
     for(let i=start; i<end; i++) if(arr[i]<arr[end]) swap(i,start++);
     swap(end,start);
@@ -83,7 +95,38 @@ export default class App extends React.Component {
     let items = await this.quick(many);
     if(items.length>0) this.setState({items,text:"Быстрая сортировка:",open:true,alert:"success"});
     else this.setState({open:true,alert:"error"});
+  }*/
+  quick = async (arr=[],left=0,right=arr.length-1,items=[]) => {
+    if(arr.length> 1){
+      let index = this.partition(arr, left, right,items);
+      if(left<index-1) this.quick(arr, left, index-1,items);  
+      if(index<right) this.quick(arr, index, right,items);
+    }
+    return items;
   }
+  
+  partition = (arr=[],left,right,items) => {
+    const pivot = arr[Math.floor((right + left) / 2)];
+    while (left <= right) {
+      while(arr[left]<pivot){ left++; items.push(this.ifPush(arr[left]+"<"+pivot,"green")); }
+      while(arr[right]>pivot){ right--; items.push(this.ifPush(arr[right]+">"+pivot,"green")); } 
+      if(left <= right){
+        [arr[left], arr[right]] = [arr[right], arr[left]];
+        if(left!=right) items.push(this.itemPush(arr,left,right));
+        left++; right--;
+      }
+    }
+    return left;
+  }
+  quickSort = async () => {
+    await this.setState({items:[],text:null});
+    let {many} = this.state;
+    try{ many=JSON.parse(many) } catch(e){ return this.setState({open:true,alert:"error"}); };
+    let items = await this.quick(many);
+    if(items.length>0) this.setState({items,text:"Быстрая сортировка:",open:true,alert:"success"});
+    else this.setState({open:true,alert:"error"});
+  }
+  //
   binomPush = (pas,ind) => {
     return (
       <>
@@ -95,21 +138,6 @@ export default class App extends React.Component {
     );
   }
   binom = async () => {
-    /*let pas = [[2]], {count}=this.state;
-    for(let i=3;i<count;i++){
-      for(let j=1;j<Math.round((i+1)/2);j++){
-        console.log(j+1)
-        pas[i][j]=(j==1 ? 1 : pas[i-1][j])+(j==i-2 ? 1 : pas[i-1][j+1]);
-      };
-    }
-    let pas = [[1],[1,1],[1,2,1]], {count}=this.state,binoms=[];
-    for(let i=3;i<count+1;i++){
-      let r=[1n];
-      for(let j=0;j<i-1;j++) r.push(BigInt(pas[i-1][j])+BigInt(pas[i-1][j+1]));
-      r.push(1n); pas.push(r);
-    }
-    for(let i=1;i<pas.length;i++) binoms.push(this.binomPush(pas[i],i));
-    this.setState({binoms});*/
     let {count}=this.state, sh, binoms=""; count=parseInt(count); let n=Math.floor(count/2), a="",b="";
     for(let k=0;k<n+1;k++){
       if(k==0) sh=1n;
