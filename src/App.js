@@ -108,8 +108,8 @@ export default class App extends React.Component {
   partition = (arr=[],left,right,items) => {
     const pivot = arr[Math.floor((right + left) / 2)];
     while (left <= right) {
-      while(arr[left]<pivot){ left++; items.push(this.ifPush(arr[left]+"<"+pivot,"green")); }
-      while(arr[right]>pivot){ right--; items.push(this.ifPush(arr[right]+">"+pivot,"green")); } 
+      while(arr[left]<pivot){ items.push(this.ifPush(arr[left]+"<"+pivot,"green")); left++; }
+      while(arr[right]>pivot){ items.push(this.ifPush(arr[right]+">"+pivot,"purple")); right--; } 
       if(left <= right){
         [arr[left], arr[right]] = [arr[right], arr[left]];
         if(left!=right) items.push(this.itemPush(arr,left,right));
