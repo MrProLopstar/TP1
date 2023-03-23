@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, Box, TextField, ButtonGroup, Button, Snackbar, Alert, ListItem, List, ListItemText, Divider, BottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
+import { Typography, Box, TextField, ButtonGroup, Button, Snackbar, Alert, List, Divider, BottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
 import "./App.css";
 
 export default class App extends React.Component {
@@ -57,7 +57,6 @@ export default class App extends React.Component {
     for(let i=0; i<many.length; i++){
       let a = many[i], j;
       for(j=i;j>0; j--){
-        console.log(j)
         if(many[j-1]>a){
           many[j] = many[j-1];
           items.push(this.ifPush(many[j-1]+">"+a,"green"));
@@ -107,9 +106,10 @@ export default class App extends React.Component {
   
   partition = (arr=[],left,right,items) => {
     const pivot = arr[Math.floor((right + left) / 2)];
-    while (left <= right) {
-      while(arr[left]<pivot){ items.push(this.ifPush(arr[left]+"<"+pivot,"green")); left++; }
-      while(arr[right]>pivot){ items.push(this.ifPush(arr[right]+">"+pivot,"purple")); right--; } 
+    let test = false;
+    while(left<=right) {
+      while(arr[left]<pivot){ if(test) items.push(this.ifPush(arr[left]+"<"+pivot,"green")); left++; }
+      while(arr[right]>pivot){ if(test) items.push(this.ifPush(arr[right]+">"+pivot,"purple")); right--; } 
       if(left <= right){
         [arr[left], arr[right]] = [arr[right], arr[left]];
         if(left!=right) items.push(this.itemPush(arr,left,right));
@@ -152,9 +152,6 @@ export default class App extends React.Component {
 
   render(){
     const {open,many,alert,items,text,nav,count,binoms} = this.state;
-    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-      this.setState({nav: newValue});
-    };
     return (
       <>
         {nav == "sort" ?
